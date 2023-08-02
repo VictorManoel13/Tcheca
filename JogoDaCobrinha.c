@@ -8,7 +8,7 @@
 int horizontal = 10, vertical = 10;// as codernadas da onde a cobrinha vai ficar
 int score = 220, apagarx = 0, apagary = 0, tem_frutinha = 0, x, y, limpar = 0, limpax, limpay, encerrar = 0;
 char direcao = 'd';
-
+int velocidade = 300;
 int contagem = 220;
 
 int mapaDestino[LINHA][COLUNA];
@@ -43,6 +43,7 @@ void atualizar();
 void comer();
 void colisao();
 void copiarMatriz(int origem[LINHA][COLUNA], int destino[LINHA][COLUNA]);
+int time();
 
 int main(){
     mapa[vertical][horizontal] = 220;
@@ -53,9 +54,10 @@ int main(){
         colisao();
         comer();
         atualizar();
-        Sleep(500);
+        Sleep(velocidade);
         set_cursor_position(0, 0);
     }while(encerrar != 1);
+    
     system("cls");
 }
 
@@ -77,12 +79,14 @@ void Desenho_Mapa(){
     }
 }
 
+// Define a posição do cursor
 void set_cursor_position(int x, int y)
 {
     COORD coord = {x, y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
+// faz a cobrinha andar atraves do teclado
 void andar() {
     if (kbhit())
     {
@@ -108,10 +112,6 @@ void andar() {
     }
 }
 
-void cobrinha() {
-    
-}
-
 void atualizar() {
     int i, j;
     mapa[vertical][horizontal] = contagem;
@@ -131,12 +131,13 @@ void atualizar() {
     }
 }
 
-
 void frutinha() {
     srand(time(NULL));
     if (tem_frutinha == 0) {
-        x = 1 + rand() % 18;
-        y = 1 + rand() % 18;
+        do{
+            x = 1 + rand() % 18;
+            y = 1 + rand() % 18;
+        }while(mapa[y][x] != 0);
         mapa[y][x] = 120;
         tem_frutinha = 1;
     }
@@ -153,12 +154,17 @@ void comer()
     }
 }
 
+
 void colisao(){
     if(mapaDestino[vertical][horizontal] == 219 || mapaDestino[vertical][horizontal] == 4){
         encerrar = 1;
+        printf("Voce bateu\nScore: %d\n", score - 220);
+        system("pause");
     }
+    
 }
 
+// copia o mapa original no qual acontece a lógica para um mapa cópia onde acontece as modificações pra ficar bonito
 void copiarMatriz(int origem[LINHA][COLUNA], int destino[LINHA][COLUNA]) {
     int i, j;
     for (i = 0; i < LINHA; i++) {
