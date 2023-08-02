@@ -1,169 +1,169 @@
 #include <stdio.h>
-#include <conio.h>
-#include<stdlib.h>
-#include <time.h>
 #include <windows.h>
-
-#define LINHA  20 
+#include <stdlib.h>
+#include <conio.h>
+#define LINHA 20
 #define COLUNA 20
 
-int horizontal = 10,vertical = 10;// as codernadas da onde a cobrinha vai ficar
-int score = 1,apagarx = 0,apagary = 0,tem_frutinha = 0,x,y,limpar = 0,limpax,limpay;
+int horizontal = 10, vertical = 10;// as codernadas da onde a cobrinha vai ficar
+int score = 220, apagarx = 0, apagary = 0, tem_frutinha = 0, x, y, limpar = 0, limpax, limpay, encerrar = 0;
 char direcao = 'd';
 
-void cursor(int x,int y);//colocar cursor no lugar
-void cobrinha();//printar cobra
-void background();//printar paredes 
-void andar();//fazer cobrinha andar
-void atualizar();//atualizar posição da cobrinha
-void frutinha();//gerar e printar fruta aleatoria
-int comer();//cobrinha comer a frutinha
-void colisao(); //verifica se a cobra colide com a parede
-//fazer cobrinha crescer
-//ver se a cobrinha morreu e printar
-//calcular score e printar score
-//colocar tempo
+int contagem = 220;
 
-int main()
-{
-    do
-    {
-        atualizar();
-        cobrinha();// esse tem que vim primeiro do que o background
-        //background();
-        frutinha();// tem q ficar aqui se n n vai
-        background();//tem que está a cima do andar
+int mapaDestino[LINHA][COLUNA];
+int mapa[LINHA][COLUNA] = {
+    {219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 219},
+    {219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219}
+};
+
+void Desenho_Mapa();
+void set_cursor_position(int x, int y);
+void frutinha();
+void andar();
+void atualizar();
+void comer();
+void colisao();
+void copiarMatriz(int origem[LINHA][COLUNA], int destino[LINHA][COLUNA]);
+
+int main(){
+    mapa[vertical][horizontal] = 220;
+    do{
+        frutinha();
+        Desenho_Mapa();
         andar();
         colisao();
         comer();
-        
-        Sleep(1000);
+        atualizar();
+        Sleep(500);
+        set_cursor_position(0, 0);
+    }while(encerrar != 1);
+    system("cls");
+}
 
-    } while (direcao != 'x');
 
-    return 0;
-}
-void background()
-{
-    int i;
-    for (i = 0; i < COLUNA; i++)//linha superior
-    {
-        cursor(i,0);
-        printf("\xDB");
-    }
-    for (i = 0; i < LINHA; i++)//linha do lado esquerdo
-    {
-        cursor(0,i);
-        printf("\xDB");
-    }
-    for (i = 0; i < LINHA; i++)//linha do lado direito
-    {
-        cursor(COLUNA,i);
-        printf("\xDB");
-    }
-    for (i = 0; i <= COLUNA; i++)// linha de baixo //tive que colocar esse = pra poder ficar bonitinho não sei como não fazer sem essa gambiarra
-    {
-        cursor(i,LINHA);
-        printf("\xDB");
+void Desenho_Mapa(){
+    int i, j;
+    copiarMatriz(mapa, mapaDestino);
+    for (i = 0; i < LINHA; i++){
+        for(j = 0; j < COLUNA; j++){
+            if(mapaDestino[i][j] == 0){
+                mapaDestino[i][j] = ' ';
+            }
+            if(mapaDestino[i][j] != ' ' && mapaDestino[i][j] != 219 && mapaDestino[i][j] != 120){
+                mapaDestino[i][j] = 4;
+            }
+            printf("%c", mapaDestino[i][j]);
+        }
+    printf("\n");
     }
 }
-void cursor(int x,int y)//usando codernadas x e y para colocar o cursor
+
+void set_cursor_position(int x, int y)
 {
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),(COORD){x,y});    
+    COORD coord = {x, y};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
-void cobrinha()
-{
-    int i;
-    for ( i = 0; i < score; i++)
-    {
-        cursor(horizontal,vertical);
-        printf("%c",220);
-    }  
-}
-void andar()
-{
+
+void andar() {
     if (kbhit())
     {
         direcao = getch();       
     }
-    
-    switch (direcao)        
-        {
+    switch (direcao) {
         case 'd':
             horizontal++;
-            apagarx = 1 * score;
-            apagary = 0;
             break;
         case 'a':
             horizontal--;
-            apagarx = -1 * score;
-            apagary = 0;
             break;
         case 'w':
             vertical--;
-            apagary = -1 * score;
-            apagarx = 0;
             break;
         case 's':
             vertical++;
-            apagary = 1 * score;
-            apagarx = 0;
             break;
         case 'x':
             system("cls");
             printf("Jogo encerrado ao precionar x");
-            break;    
-        }
+            break;   
+    }
 }
-void atualizar()
-{
-        int i;
-        for ( i = 0; i < score; i++)
-        {
-            cursor(horizontal - apagarx,vertical - apagary);
-            printf(" ");
-        }
+
+void cobrinha() {
     
-}   
-void frutinha()
-{
-    if (tem_frutinha == 0)
-    {
-        srand(time(NULL));
-        do
-        {
-            x = rand() % COLUNA - 1;
-            y = rand() % LINHA - 1;
-        } while (x == 0 || y == 0 ||x == horizontal || y == vertical );
+}
 
-        cursor(x,y);
-        printf("0");
+void atualizar() {
+    int i, j;
+    mapa[vertical][horizontal] = contagem;
+    for(i = 0; i < 20; i++){
+        for(j = 0; j < 20; j++){
+            if(i != vertical || j != horizontal){
+                if(mapa[i][j] == contagem){
+                    mapa[i][j] = ' ';
+                }
+            }
+        }
+    }
+    if(contagem == score){
+        contagem = 220;
+    } else{
+        contagem++;
+    }
+}
 
+
+void frutinha() {
+    srand(time(NULL));
+    if (tem_frutinha == 0) {
+        x = 1 + rand() % 18;
+        y = 1 + rand() % 18;
+        mapa[y][x] = 120;
         tem_frutinha = 1;
     }
-    
-}
-void colisao()
-{
-    if (horizontal <= 0 || horizontal >= COLUNA || vertical <= 0 || vertical >= LINHA)
-    {
-        direcao = 'x';
-        system("cls");
-        printf("\n\n\tVOCE PERDEU\n"); // Encerrar o jogo se a cobrinha colidir com as paredes
-    }
 }
 
-int comer()
+void comer()
 {
     if(horizontal == x && vertical == y) // cobrinha comeu fruta
     {
         score++;
-        return tem_frutinha = 0;// não tem frutinha
-    }
-    else
-    {
-        return tem_frutinha = 1;
+        tem_frutinha = 0; // não tem frutinha
+    }else{
+        tem_frutinha = 1;
     }
 }
 
+void colisao(){
+    if(mapa[vertical][horizontal] == 219){
+        encerrar = 1;
+    }
+}
 
+void copiarMatriz(int origem[LINHA][COLUNA], int destino[LINHA][COLUNA]) {
+    int i, j;
+    for (i = 0; i < LINHA; i++) {
+        for (j = 0; j < COLUNA; j++) {
+            destino[i][j] = origem[i][j];
+        }
+    }
+}
