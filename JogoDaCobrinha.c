@@ -154,7 +154,7 @@ void comer()
 }
 
 void colisao(){
-    if(mapa[vertical][horizontal] == 219){
+    if(mapaDestino[vertical][horizontal] == 219 || mapaDestino[vertical][horizontal] == 4){
         encerrar = 1;
     }
 }
